@@ -1,0 +1,22 @@
+<?php
+
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ItemController;
+use App\Http\Controllers\AdminController;
+
+Route::get('/', [AuthController::class, 'showLogin'])->name('login');
+Route::post('/login', [AuthController::class, 'login']);
+
+// USER
+Route::middleware(['auth', 'role:user'])->group(function () {
+    Route::get('/dashboard', [ItemController::class, 'dashboard'])->name('user.dashboard');
+    Route::get('/items/create', [ItemController::class, 'create'])->name('items.create');
+    Route::post('/items', [ItemController::class, 'store'])->name('items.store');
+});
+
+// ADMIN
+Route::middleware(['auth', 'role:admin'])->group(function () {
+    Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+    Route::post('/admin/approve/{id}', [AdminController::class, 'approve'])->name('admin.approve');
+});
